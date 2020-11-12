@@ -1,25 +1,32 @@
 <template>
   <div id="app" class="container col-md-12" >
     <div class="container" style="max-width: 500px; text-align: left"> 
-      <credit-component v-on:ganti-gambar="gantigambar"/>
+      <credit-component/>
     </div>  
-
+    
+    <div> 
+      <button v-on:click="gantigambar()">Random gambar</button>
     <article v-if="!selectedHero">
-      <hero-component v-for="(item, index) of hero" :hero="item" :index="index" :key="item.id"/>
+      <hero-component v-on:ganti-gambar="gantigambar" v-for="(item, index) of hero" :hero="item" :index="index" :key="item.id"/>
     </article>
     <article v-else>
       <hero-component :hero="selectedHero" :index="0" />
     </article>
+    </div>
+
+    <computed-component/>
   </div>
 </template>
 
 <script>
 import Credit from '../components/Credit.vue'
 import Hero from '../components/Hero.vue'
+import Computed from '../components/Computed.vue'
 export default {
   components : {
     'credit-component' : Credit,
-    'hero-component' : Hero
+    'hero-component' : Hero,
+    'computed-component' : Computed
   },
   name: "app",
   data: function() {
