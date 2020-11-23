@@ -86,10 +86,24 @@
       </div>
     </div>
 
+  <div>
+    <transition name="modal">
+      <div v-show="isHide">
+        <div class="overlay">
+          <div class="modal">
+           <iframe name="sample-inline-frame" width="100%"  marginwidth=0 marginheight=0 border=0></iframe>
+
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
+
     <div class="col-sm-12" v-if="success_valid">
       <p style="color: green; font-size: 10pt">{{ success_message }}</p>
       <p style="color: red; font-size: 10pt">{{ error_message }}</p>
     </div>
+    <!-- <iframe name="sample-inline-frame"></iframe> -->
     <!-- <button v-on:click="$emit('ganti-gambar')">Random gambar</button> -->
   </div>
 </template>
@@ -110,6 +124,7 @@ export default {
       success_message: "",
       error_message: "",
       xendit: window.Xendit,
+     isHide: false,
       validMonth: [
         "01",
         "02",
@@ -206,7 +221,7 @@ export default {
           card_exp_year: "20" + this.yy,
           card_cvn: this.cvv,
           is_multiple_use: false,
-          should_authenticate: false,
+          should_authenticate: true,
         };
         this.xendit.card.createToken(tokenData, this.handleToken);
       }
@@ -223,41 +238,95 @@ export default {
           this.success_message = "Verifikasi Berhasil";
           this.error_message = "";
         } else if (data.status === "IN_REVIEW") {
+          console.log(data)
           localStorage.setItem("tokenResponse", JSON.stringify(data));
-          // token = JSON.parse(localStorage.getItem("tokenResponse"));
-          this.success_message = "Verifikasi Berhasil";
-          this.error_message = "";
+          this.authenticate(err, data)
+          // // token = JSON.parse(localStorage.getItem("tokenResponse"));
+          // this.success_message = "Verifikasi Berhasil";
+          // this.error_message = "";
         } else if (data.status === "FAILED") {
           console.log(data.id);
           alert(data.status);
         }
       }
     },
+    authenticate: function (err, creditCardCharge) {        
+      if (err) {        
+        // Show the errors on the form        
+        // $('#error pre').text(err.message);        
+        // $('#error').show();        
+        // $form.find('.submit').prop('disabled', false); // Re-enable submission        
+            
+        return;        
+      }        
+            
+      if (creditCardCharge.status === 'VERIFIED') {        
+        // Get the token ID:        
+        var token = creditCardCharge.id;        
+            console.log(token)
+        // Insert the token into the form so it gets submitted to the server:        
+        // $form.append($('<input type="hidden" name="xenditToken" />').val(token));        
+            
+        // // Submit the form to your server:        
+        // $form.get(0).submit();        
+      } else if (creditCardCharge.status === 'IN_REVIEW') {  
+       this.isHide = true
+        window.open(creditCardCharge.payer_authentication_url, 'sample-inline-frame');        
+        // $('#three-ds-container').show();        
+      } else if (creditCardCharge.status === 'FAILED') {        
+        // $('#error pre').text(creditCardCharge.failure_reason);        
+        // $('#error').show();        
+        // $form.find('.submit').prop('disabled', false); // Re-enable submission        
+      }      
+    }
   },
 };
 </script>
+
+
 <style scoped>
-.error_message {
-  color: red;
-  font-size: 8pt;
+.modal {
+  width: 500px;
+  margin: 0px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px 3px;
+  transition: all 0.2s ease-in;
+  font-family: Helvetica, Arial, sans-serif;
 }
-.success-icon {
-  position: absolute;
-  right: 5px;
-  top: 6px;
-  color: green;
-  display: inline-block;
+.fadeIn-enter {
+  opacity: 0;
 }
-.error:focus-within {
-  border:1px solid red;
+
+.fadeIn-leave-active {
+  opacity: 0;
+  transition: all 0.2s step-end;
 }
-.success:focus-within {
-  border:1px solid green
+
+.fadeIn-enter .modal,
+.fadeIn-leave-active.modal {
+  transform: scale(1.1);
 }
-.error:focus {
-  box-shadow:0 0 0 0.2rem rgb(253 34 34 / 25%);
+button {
+  padding: 7px;
+  margin-top: 10px;
+  background-color: green;
+  color: white;
+  font-size: 1.1rem;
 }
-.success:focus {
-  box-shadow: 0 0 0 0.2rem rgb(57 253 34 / 25%);
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #00000094;
+  z-index: 999;
+  transition: opacity 0.2s ease;
 }
 </style>

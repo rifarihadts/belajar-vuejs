@@ -10,10 +10,16 @@
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.4.0",
+    "location": "0.0.1",
+    "navigator": "^1.0.1",
     "sass": "^1.29.0",
     "vue": "^2.6.11",
+    "vue-content-loader": "^0.2.3",
     "vue-credit-card-validation": "^0.1.10",
-    "vuelidate": "^0.7.6"
+    "vuelidate": "^0.7.6",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -38,7 +44,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-mixed-spaces-and-tabs" : 0
+      "no-mixed-spaces-and-tabs": 0
     }
   },
   "browserslist": [
