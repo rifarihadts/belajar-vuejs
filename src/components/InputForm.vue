@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="container col-md-12" >
-    <div class="container" style="max-width: 500px; text-align: left"> 
+    <!-- <div class="container" style="max-width: 500px; text-align: left"> 
       <credit-component/>
-    </div>  
+    </div>   -->
     <div class="container"> 
       <maps-component/>
     </div>  
