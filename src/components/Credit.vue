@@ -88,11 +88,10 @@
 
   <div>
     <transition name="modal">
-      <div v-show="isHide">
+      <div v-show="showModal">
         <div class="overlay">
           <div class="modal">
            <iframe name="sample-inline-frame" width="100%"  marginwidth=0 marginheight=0 border=0></iframe>
-
           </div>
         </div>
       </div>
@@ -124,7 +123,7 @@ export default {
       success_message: "",
       error_message: "",
       xendit: window.Xendit,
-     isHide: false,
+      showModal: false,
       validMonth: [
         "01",
         "02",
@@ -235,15 +234,15 @@ export default {
           this.success_valid = true;
           localStorage.setItem("tokenResponse", JSON.stringify(data));
           // var token = JSON.parse(localStorage.getItem("tokenResponse"));
+          this.showModal = false
           this.success_message = "Verifikasi Berhasil";
           this.error_message = "";
         } else if (data.status === "IN_REVIEW") {
           console.log(data)
           localStorage.setItem("tokenResponse", JSON.stringify(data));
-          this.authenticate(err, data)
-          // // token = JSON.parse(localStorage.getItem("tokenResponse"));
-          // this.success_message = "Verifikasi Berhasil";
-          // this.error_message = "";
+          this.showModal = true
+          console.log(this.showModal)
+          window.open(data.payer_authentication_url, 'sample-inline-frame')
         } else if (data.status === "FAILED") {
           console.log(data.id);
           alert(data.status);
@@ -270,7 +269,7 @@ export default {
         // // Submit the form to your server:        
         // $form.get(0).submit();        
       } else if (creditCardCharge.status === 'IN_REVIEW') {  
-       this.isHide = true
+       this.showModal = true
         window.open(creditCardCharge.payer_authentication_url, 'sample-inline-frame');        
         // $('#three-ds-container').show();        
       } else if (creditCardCharge.status === 'FAILED') {        
