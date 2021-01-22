@@ -1,11 +1,11 @@
 <template>
   <div id="app" class="container col-md-12" >
-    <!-- <div class="container" style="max-width: 500px; text-align: left"> 
-      <credit-component/>
-    </div>   -->
-    <div class="container"> 
+      <div class="container" style="max-width: 500px; text-align: left"> 
+        <credit-component/>
+      </div>  
+    <!-- <div class="container"> 
       <maps-component/>
-    </div>  
+    </div>   -->
     <!-- <div class="container" style="max-width: 500px; text-align: left"> 
       <va-component/>
     </div>   -->
@@ -24,15 +24,15 @@
 </template>
 
 <script>
-// import Credit from '../components/Credit.vue'
-import Maps from '../components/Maps.vue'
+import Credit from '../components/Credit.vue'
+// import Maps from '../components/Maps.vue'
 // import Hero from '../components/Hero.vue'
 // import Computed from '../components/Computed.vue'
 // import VirtualAccount from '../components/VirtualAccount.vue'
 export default {
   components : {
-    // 'credit-component' : Credit,
-    'maps-component' : Maps,
+    'credit-component' : Credit,
+    // 'maps-component' : Maps,
     // 'hero-component' : Hero,
     // 'computed-component' : Computed,
     // 'va-component' : VirtualAccount

@@ -15,6 +15,7 @@
           class="form-control"
           :maxlength="16"
           @keypress="isNumber($event)"
+          :readonly="readOnly"
           :class="{ 'error': !nomor_kartu_valid, 'success' : nomor_kartu_valid }"
         />
         <div class="success-icon" v-if="nomor_kartu_valid">
@@ -37,6 +38,7 @@
                 name="mm"
                 class="form-control"
                 :class="{ 'error': !mm_valid, 'success' : mm_valid}"
+                :readonly="readOnly"
                 required
               />
               <div class="success-icon" v-if="mm_valid">
@@ -52,12 +54,16 @@
                 name="yy"
                 class="form-control"
                 :class="{ 'error': !yy_valid, 'success' : yy_valid}"
+                :readonly="readOnly"
                 required
               />
               <div class="success-icon" v-if="yy_valid">
                 <i class="fas fa-check-circle"></i>
               </div>
             </span>
+              <div style="margin-left:-30px">
+              <loading v-show="showLoading"></loading>
+              </div>
           </div>
           
         </div>
@@ -77,6 +83,7 @@
             required
             class="form-control"
             :class="{ 'error': !cvv_valid, 'success' : cvv_valid}"
+            :readonly="readOnly"
           />
            <div class="success-icon" v-if="cvv_valid">
               <i class="fas fa-check-circle"></i>
@@ -89,6 +96,7 @@
   <div>
     <transition name="modal">
       <div v-show="showModal">
+        
         <div class="overlay">
           <div class="modal">
            <iframe name="sample-inline-frame" width="100%"  marginwidth=0 marginheight=0 border=0></iframe>
@@ -108,6 +116,8 @@
 </template>
 
 <script >
+import LoadingBar from "../components/Loading.vue";
+
 export default {
   data: function () {
     return {
@@ -124,6 +134,8 @@ export default {
       error_message: "",
       xendit: window.Xendit,
       showModal: false,
+      showLoading:false,
+      readOnly:false,
       validMonth: [
         "01",
         "02",
@@ -139,6 +151,9 @@ export default {
         "12",
       ],
     };
+  },
+  components: {
+    'loading' : LoadingBar
   },
   watch: {
     nomor_kartu() {
@@ -189,6 +204,8 @@ export default {
         this.success_valid = false;
       } else {
         this.cvv_valid = true;
+        this.readOnly = true;
+        this.showLoading = true;
         this.checkValidation(
           this.nomor_kartu_valid,
           this.mm_valid,
@@ -228,9 +245,13 @@ export default {
     handleToken: function (err, data) {
       if (err) {
         this.success_valid = true;
+        this.readOnly = false;
+        this.showLoading = false;
         this.error_message = err.message;
       } else {
         if (data.status === "VERIFIED") {
+          this.showLoading = false;
+          this.readOnly = false;
           this.success_valid = true;
           localStorage.setItem("tokenResponse", JSON.stringify(data));
           // var token = JSON.parse(localStorage.getItem("tokenResponse"));
@@ -285,14 +306,16 @@ export default {
 
 <style scoped>
 .modal {
-  width: 500px;
-  margin: 0px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px 3px;
-  transition: all 0.2s ease-in;
-  font-family: Helvetica, Arial, sans-serif;
+   width: 500px;
+      margin: 150px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px 3px;
+      transition: all 0.2s ease-in;
+      display: inline-block;
+      font-family: Helvetica, Arial, sans-serif;
+      height: fit-content;
 }
 .fadeIn-enter {
   opacity: 0;

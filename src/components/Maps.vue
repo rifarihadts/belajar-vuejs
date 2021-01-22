@@ -1,21 +1,26 @@
 <template>
   <div id="app">
-    halooooo
-     <div id="map" ref="map"></div>
+    <div class="container-map">
+      <input id="pac-input" class="controls" type="text" placeholder="Search Box"  v-model="theLocation">
+        <div id="map" ref="map"></div>
+      </div>
   </div>
 </template>
 
+<script>
+import Vue from 'vue'
 
+export const eventBus = new Vue({
+  methods: {}
+});
 
-<script >
-// import func from '../../vue-temp/vue-editor-bridge.js';
-import { eventBus } from '../assets/event-bus.js'
 export default {
   data: function () {
     return {
       map:null,
       geocoder: null,
-      placesService: null,
+      theLocation: '',
+      curPlace: null,
     };
   },
   mounted: function() {
@@ -33,78 +38,104 @@ export default {
   },
   methods: {
     load: function () {
-      console.log(window.google)
         this.geocoder = new window.google.maps.Geocoder();
-        console.log(this.geocoder)
         this.map = new window.google.maps.Map(this.$refs["map"],{
           center : {
             lat: 3.590000, lng: 98.678020
           },
           zoom: 15,
-          gestureHandling: "greedy"
+          gestureHandling: "cooperative"
         });
         
-        // this.setMarkers();
+        const input = document.getElementById('pac-input');
+        const autocomplete = new window.google.maps.places.Autocomplete(input);
 
-        this.placesService = new window.google.maps.places.PlacesService(this.map);
+        window.google.maps.event.addListener(autocomplete, 'place_changed', () => {
+        this.curPlace = autocomplete.getPlace();
+        this.theLocation = this.curPlace.formatted_address;
+        console.log(this.curPlace)
+        if (typeof this.curPlace.formatted_address !== "undefined") {          
+            //update the map
+            this.updateFromTextAddress(this.curPlace);
+          }
+        });
 
-        var latlng = { lat: 3.5899278, lng: 98.6741724 }
+        var latlng = { lat: 3.5896654, lng: 98.6738261 }
         this.updateMarker(latlng)
-        
+
         window.google.maps.event.addListener(this.map, "click", (event) => {
         this.lastLat = event.latLng.lat();
         this.lastLng = event.latLng.lng();
         
         this.updateMarker(event.latLng);
-        console.log(this.lastLat,this.lastLng);
-        this.geocoder.geocode({'location': event.latLng}, (results) => {
+        this.geocoder.geocode({'location': event.latLng}, (results, status) => {
           if (results) {
-            console.log(results)
-            eventBus.$emit('mapAddress', results);
+            this.updateAddressFromMap(results)
+          }
+          else 
+          {
+            console.log(status)
           }
         });
       });
     },
-    setMarkers : function() {
-      var bounds = new window.google.maps.LatLngBounds()
-      var latlng = { lat: 3.5899278, lng: 98.6741724 }
-      new window.google.maps.Marker({
-        map : this.map,
-        position: latlng,
-        draggable:true
-      })
-      bounds.extend(latlng)
-      // this.map.fitBounds(bounds)
+    
+    updateFromTextAddress(payload) 
+    {
+      this.map.setCenter(payload.geometry.location);
+      this.updateMarker(payload.geometry.location);
+      this.lastLat = payload.geometry.location.lat();
+      this.lastLng = payload.geometry.location.lng();
+    },
+
+    updateAddressFromMap(payload) {
+      const firstAddress = payload[0].formatted_address;
+      this.theLocation = firstAddress;
     },
     updateMarker(latLng) {
       if (!this.marker) {
         this.marker = new window.google.maps.Marker({
           map: this.map,
-          draggable:true
         });
-
-        window.google.maps.event.addListener(this.marker, "dragend", (event) => {
-        this.lastLat = event.latLng.lat();
-        this.lastLng = event.latLng.lng();
-        console.log(this.lastLat,this.lastLng)
-        this.geocoder.geocode({'location': event.latLng}, (results) => {
-          if (results) {
-            console.log(results)
-            eventBus.$emit('mapAddress', results);
-          }
-        });
-      });
-      
       }
-      
+
       this.marker.setPosition(latLng);
     },
   }
 };
 </script>
+
 <style scoped>
-  #map {
-    height: 600px;
-    background: gray;
-  }
+#map {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.container-map {
+  width: 100%;
+  height: 600px;
+}
+
+#pac-input {
+  position: absolute;
+  margin-top:15px;
+  left:27%;
+  z-index: 1;
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  width: 30%;
+  text-overflow: ellipsis;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+.loading-spinner {
+  width: 500px;
+  height: 500px;
+}
 </style>
