@@ -1,8 +1,11 @@
 <template>
   <div id="app" class="container col-md-12" >
-      <div class="container" style="max-width: 500px; text-align: left"> 
-        <credit-component/>
-      </div>  
+    <!-- <div class="container" style="max-width: 500px; text-align: left"> 
+        <checkbox-component/>
+    </div>     -->
+    <div class="container" style="max-width: 500px; text-align: left"> 
+       <credit-component/>
+    </div>  
     <!-- <div class="container"> 
       <maps-component/>
     </div>   -->
@@ -25,6 +28,7 @@
 
 <script>
 import Credit from '../components/Credit.vue'
+// import Checkbox from '../components/CheckBox.vue'
 // import Maps from '../components/Maps.vue'
 // import Hero from '../components/Hero.vue'
 // import Computed from '../components/Computed.vue'
@@ -32,6 +36,7 @@ import Credit from '../components/Credit.vue'
 export default {
   components : {
     'credit-component' : Credit,
+    // 'checkbox-component' : Checkbox,
     // 'maps-component' : Maps,
     // 'hero-component' : Hero,
     // 'computed-component' : Computed,
